@@ -1,5 +1,6 @@
 package com.example.operacionesmatematicas
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -38,12 +39,23 @@ class MainActivity : ComponentActivity() {
 
             var numero1 by remember { mutableStateOf("") }
             var numero2 by remember { mutableStateOf("") }
-            var resultado by remember { mutableStateOf("") }
 
-            // Colores del diseño del maestro
             val amarillo = Color(0xFFFFDA57)
             val azulClaro = Color(0xFFCAE4FB)
             val azulBorde = Color(0xFF42A5F5)
+
+            val operaciones = OperacionesMatematicas()
+
+            fun enviarResultado(resultado: Double) {
+                val intent = Intent(
+                    this@MainActivity,
+                    ResultadoActivity::class.java
+                )
+
+                intent.putExtra("resultado", resultado)
+
+                startActivity(intent)
+            }
 
             Column(
                 modifier = Modifier
@@ -68,7 +80,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
+                        keyboardType = KeyboardType.Decimal
                     ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = azulClaro,
@@ -98,7 +110,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
+                        keyboardType = KeyboardType.Decimal
                     ),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = azulClaro,
@@ -119,7 +131,8 @@ class MainActivity : ComponentActivity() {
                         val n2 = numero2.toDoubleOrNull()
 
                         if (n1 != null && n2 != null) {
-                            resultado = (n1 + n2).toString()
+                            val resultado = operaciones.sumar(n1, n2)
+                            enviarResultado(resultado)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -144,7 +157,8 @@ class MainActivity : ComponentActivity() {
                         val n2 = numero2.toDoubleOrNull()
 
                         if (n1 != null && n2 != null) {
-                            resultado = (n1 - n2).toString()
+                            val resultado = operaciones.restar(n1, n2)
+                            enviarResultado(resultado)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -169,7 +183,8 @@ class MainActivity : ComponentActivity() {
                         val n2 = numero2.toDoubleOrNull()
 
                         if (n1 != null && n2 != null && n2 != 0.0) {
-                            resultado = (n1 / n2).toString()
+                            val resultado = operaciones.dividir(n1, n2)
+                            enviarResultado(resultado)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -194,7 +209,8 @@ class MainActivity : ComponentActivity() {
                         val n2 = numero2.toDoubleOrNull()
 
                         if (n1 != null && n2 != null) {
-                            resultado = (n1 * n2).toString()
+                            val resultado = operaciones.multiplicar(n1, n2)
+                            enviarResultado(resultado)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -210,15 +226,6 @@ class MainActivity : ComponentActivity() {
                         fontWeight = FontWeight.Bold
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Resultado: $resultado",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
             }
         }
     }
